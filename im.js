@@ -11,8 +11,8 @@ var IM = (function () {
     Comet.prototype.on = function (eventName, callback) {
         this.pb.on.apply(this.pb, arguments);
     };
-    Comet.prototype.once = function (eventName, callback) {
-        this.pb.once.apply(this.pb, arguments);
+    Comet.prototype.one = function (eventName, callback) {
+        this.pb.one.apply(this.pb, arguments);
     };
     Comet.prototype.emit = function (eventName) {
         this.pb.trigger.apply(this.pb, arguments);
