@@ -1,4 +1,4 @@
-var im = Comet('test');
+var im = Comet('liveId');
 
 im.open();
 
