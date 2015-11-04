@@ -1,5 +1,10 @@
 var Comet = (function () {
     var ORIGIN = "http://im.av.qiaobutang.com:8333";
+    var MsgType = {
+        chat: 1,
+        systemMsg: 2,
+        live: 3
+    };
 
     var IM = function (businessIds) {
         this.businessIds = businessIds;
@@ -29,9 +34,15 @@ var Comet = (function () {
                     return deferred.reject('get uuid failed');
                 }
             })
+            .fail(function () {
+                // 系统错误后重连
+                setTimeout(function () {
+                    _this.open();
+                }, 20000)
+            })
             .then($.proxy(this.comet, this))
     };
-    IM.prototype.comet = function (uuid) {
+    IM.prototype.comet = function () {
         var _this = this;
         return $.get(ORIGIN + '/comet/web/connect/' + this.uuid)
             .then(function (res) {
@@ -41,6 +52,12 @@ var Comet = (function () {
                     _this.emit('message', res);
                     _this.comet();
                 }
+            })
+            .fail(function () {
+                // 系统错误后重连
+                setTimeout(function () {
+                    _this.open();
+                }, 20000);
             });
     };
     IM.prototype.close = function () {
