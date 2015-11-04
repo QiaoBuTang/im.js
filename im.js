@@ -9,6 +9,7 @@ var Comet = (function () {
     var IM = function (businessIds) {
         this.businessIds = businessIds;
         this.pb = $({});
+        this.connect = null;
     };
 
     // a pub/sub pattern depend on jquery
@@ -29,10 +30,11 @@ var Comet = (function () {
                 var deferred = $.Deferred();
                 if (data.resultCode === 200) {
                     _this.uuid = data.uuid;
-                    return deferred.resolve();
+                    deferred.resolve();
                 } else {
-                    return deferred.reject('get uuid failed');
+                    deferred.reject('get uuid failed');
                 }
+                return deferred.promise();
             })
             .fail(function () {
                 // 系统错误后重连
@@ -44,7 +46,8 @@ var Comet = (function () {
     };
     IM.prototype.comet = function () {
         var _this = this;
-        return $.get(ORIGIN + '/comet/web/connect/' + this.uuid)
+        this.connect =  $.get(ORIGIN + '/comet/web/connect/' + this.uuid);
+        this.connect
             .then(function (res) {
                 if (res.resultCode === 504) {
                     _this.comet(); // 如果超时，立刻重连
@@ -61,7 +64,7 @@ var Comet = (function () {
             });
     };
     IM.prototype.close = function () {
-
+        this.connect && this.connect.abort();
     };
     IM.prototype.subscribe = function (channels, callback) {
 
