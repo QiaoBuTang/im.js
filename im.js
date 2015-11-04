@@ -1,8 +1,8 @@
-(function () {
+var Comet = (function () {
     var ORIGIN = "http://im.av.qiaobutang.com:8333";
 
     var IM = function (businessIds) {
-        this.businessIds = businessIds.join(',');
+        this.businessIds = businessIds;
         this.pb = $({});
     };
 
@@ -14,22 +14,24 @@
         this.pb.once.apply(this.pb, arguments);
     };
     IM.prototype.emit = function (eventName) {
-        this.pb.on.trigger(this.pb, arguments);
+        this.pb.trigger.apply(this.pb, arguments);
     };
 
     IM.prototype.open = function () {
+        var _this = this;
         $.post(ORIGIN + '/comet/web/bindAndComet', {businessIds: this.businessIds})
             .then(function (data) {
                 var deferred = $.Deferred();
-                if (data.resultCode !== 200) {
-                    return deferred.resolve(data.uuid);
+                if (data.resultCode === 200) {
+                    _this.uuid = data.uuid;
+                    return deferred.resolve();
                 } else {
                     return deferred.reject('get uuid failed');
                 }
             })
-            .then(this.comet)
+            .then($.proxy(this.comet, this))
     };
-    IM.prototype.comet = function () {
+    IM.prototype.comet = function (uuid) {
         var _this = this;
         return $.get(ORIGIN + '/comet/web/connect/' + this.uuid)
             .then(function (res) {
@@ -51,4 +53,4 @@
     return function (businessIds) {
         return new IM(businessIds);
     };
-});
+}());
