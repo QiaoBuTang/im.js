@@ -61,7 +61,7 @@
 ## DEMO
 
 ```javascript
-var im = Comet('liveId');
+var im = IM('liveId');
 
 im.open();
 
