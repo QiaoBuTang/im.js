@@ -1,0 +1,27 @@
+{
+  "name": "imjs",
+  "homepage": "https://github.com/QiaoBuTang/im.js",
+  "authors": [
+    "GilbertSun <szb4321@gmail.com>"
+  ],
+  "description": "qbt im javascript sdk",
+  "main": "im.js",
+  "moduleType": [],
+  "keywords": [
+    "im",
+    "qbt",
+    "JavaScript"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "demo",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "jquery": "1.11.*"
+  }
+}
