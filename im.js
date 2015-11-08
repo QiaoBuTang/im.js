@@ -61,6 +61,28 @@ var IM = (function () {
     Comet.prototype.close = function () {
         this.connect && this.connect.abort();
     };
+    /**
+     * 获取当前业务的连接数
+     * @param callback {Function}
+     */
+    Comet.prototype.connections = function (callback) {
+        $.get(ORIGIN + '/comet/web/group/' + this.businessIds + '/count').then(function (res) {
+            if (res.resultCode === 200) {
+                callback({
+                    resultCode: 200,
+                    count: 123
+                });
+            } else {
+                callback({
+                    resultCode: 400
+                });
+            }
+        }, function () {
+            callback({
+                resultCode: 400
+            });
+        });
+    };
 
     return function (businessIds) {
         return new Comet(businessIds);
