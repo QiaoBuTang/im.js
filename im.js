@@ -1,5 +1,5 @@
 var IM = (function () {
-    var ORIGIN = "http://im.av.qiaobutang.com:8333";
+    var ORIGIN = IM_SERVER || "http://im.av.qiaobutang.com:8333";
 
     var Comet = function (businessIds) {
         this.businessIds = businessIds;
