@@ -50,7 +50,7 @@ var IM = (function () {
         bids = this._processBid(bids);
         bids.forEach(function (bid) {
             $.get(ORIGIN + '/comet/web/bind/' + _this.uuid + '/' + bid)
-                then(function (res) {
+                .then(function (res) {
                     if (res.resultCode === 2000) {
                         _this.trigger('didBind', bid);
                     } else {
@@ -62,7 +62,23 @@ var IM = (function () {
                 });
         });
     };
-    add
+    Comet.prototype.removeBusiness = function (bids) {
+        var _this = this;
+        bids = this._processBid(bids);
+        bids.forEach(function (bid) {
+            $.get(ORIGIN + '/comet/web/unbind/' + bid)
+                .then(function (res) {
+                    if (res.resultCode === 2000) {
+                        _this.trigger('didUnBind', bid);
+                    } else {
+                        _this.trigger('unBindError', bid);
+                    }
+                })
+                .fail(function () {
+                    _this.trigger('unBindError', bid);
+                });
+        });
+    };
     Comet.prototype.comet = function () {
         var _this = this;
         this.connect =  $.get(ORIGIN + '/comet/web/connect/' + this.uuid);
