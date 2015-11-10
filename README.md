@@ -16,7 +16,7 @@
 
 参数:
 
-  * businessId {String} (必须)  注册实时通信服务的业务 Id，根据业务的场景不同而不同
+  * businessId {String|Array} (必须)  注册实时通信服务的业务 Id，根据业务的场景不同而不同
 
 返回值: {Object} imClient IM 的实例，用于后续的接收消息
 
@@ -26,7 +26,7 @@
 
 参数: 无
 
-返回: 无
+返回: imClient
 
 ### `imClient.on(eventName, callback)`
 
@@ -34,7 +34,11 @@
 
 参数:
 
-  * eventName {String} (必须) 监听的事件名称，现在只有 `message` 事件
+  * eventName {String} (必须) 监听的事件名称
+    * chat: 聊天
+    * noty: 系统通知
+    * live: 在线交流
+    * online: 在线人数
   * callback {Function} (必须) 事件的回掉函数
 
 返回: 无

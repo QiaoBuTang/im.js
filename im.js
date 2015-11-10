@@ -6,7 +6,7 @@ var IM = (function () {
         this.bIds = this._processBid(bIds);
         this.pb = $({});
         this.connect = null;
-        this.liveNum = this.connections;
+        this.online = this.connections;
     };
     // TODO: 去重
     Comet.prototype._processBid = function (bIds) {
@@ -46,7 +46,7 @@ var IM = (function () {
             .then($.proxy(this.comet, this))
         return this;
     };
-    Comet.prototype.addLiveNumBind = function (bid) {
+    Comet.prototype.addOnlineBind = function (bid) {
         var meta = 'META_' + bid;
         this.addBusiness(meta);
     };
@@ -121,7 +121,7 @@ var IM = (function () {
                 emit('live', res.businessId, res.result);
             break;
             case 4:
-                emit('liveNum', res.result.businessId, res.result.count);
+                emit('online', res.result.businessId, res.result.count);
             break;
         }
     };
