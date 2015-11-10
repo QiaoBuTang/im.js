@@ -46,6 +46,10 @@ var IM = (function () {
             .then($.proxy(this.comet, this))
         return this;
     };
+    Comet.prototype.addLiveNumBind = function (bid) {
+        var meta = 'META_' + bid;
+        this.addBusiness(meta);
+    };
     Comet.prototype.addBusiness = function (bids) {
         var _this = this;
         bids = this._processBid(bids);
