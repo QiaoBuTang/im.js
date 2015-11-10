@@ -6,6 +6,7 @@ var IM = (function () {
         this.bIds = this._processBid(bIds);
         this.pb = $({});
         this.connect = null;
+        this.liveNum = this.connections;
     };
     // TODO: 去重
     Comet.prototype._processBid = function (bIds) {
