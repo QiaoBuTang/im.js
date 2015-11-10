@@ -7,6 +7,7 @@ var IM = (function () {
         this.pb = $({});
         this.connect = null;
     };
+    // TODO: 去重
     Comet.prototype._processBid = function (bIds) {
         if (bIds instanceof Array) return bIds;
         if (typeof bIds === 'string') return bIds.split(',');
@@ -44,6 +45,24 @@ var IM = (function () {
             .then($.proxy(this.comet, this))
         return this;
     };
+    Comet.prototype.addBusiness = function (bids) {
+        var _this = this;
+        bids = this._processBid(bids);
+        bids.forEach(function (bid) {
+            $.get(ORIGIN + '/comet/web/bind/' + _this.uuid + '/' + bid)
+                then(function (res) {
+                    if (res.resultCode === 2000) {
+                        _this.trigger('didBind', bid);
+                    } else {
+                        _this.trigger('bindError', bid);
+                    }
+                })
+                .fail(function () {
+                    _this.trigger('bindError', bid);
+                });
+        });
+    };
+    add
     Comet.prototype.comet = function () {
         var _this = this;
         this.connect =  $.get(ORIGIN + '/comet/web/connect/' + this.uuid);
