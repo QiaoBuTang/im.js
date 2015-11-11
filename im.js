@@ -3,6 +3,7 @@ var IM = (function () {
     var Instance; // comet 的单例对象, 一个页面只存在一个 comet 实例
 
     var Comet = function (bIds) {
+        this.uuid = null;
         this.bIds = this._processBid(bIds);
         this.pb = $({});
         this.connect = null;
@@ -24,7 +25,7 @@ var IM = (function () {
         this.pb.trigger.apply(this.pb, arguments);
     };
 
-    Comet.prototype.open = function () {
+    Comet.prototype.open = function (callback) {
         var _this = this;
         $.post(ORIGIN + '/comet/web/bindAndComet', {businessIds: this.bIds.join(',')})
             .then(function (data) {
@@ -44,11 +45,15 @@ var IM = (function () {
                 }, 20000)
             })
             .then($.proxy(this.comet, this))
+            .then(function () {
+                callback();
+            });
         return this;
     };
     Comet.prototype.addOnlineBind = function (bid) {
         var meta = 'META_' + bid;
         this.addBusiness(meta);
+        return this;
     };
     Comet.prototype.addBusiness = function (bids) {
         var _this = this;
@@ -67,6 +72,7 @@ var IM = (function () {
                     _this.emit('bindError', bid);
                 });
         });
+        return this;
     };
     Comet.prototype.removeBusiness = function (bids) {
         var _this = this;
@@ -139,7 +145,8 @@ var IM = (function () {
     };
     /**
      * 获取当前业务的连接数
-     * @param callback {Function}
+     * @param {String} bId
+     * @param {Function} callback
      */
     Comet.prototype.connections = function (bId, callback) {
         $.get(ORIGIN + '/comet/web/group/' + bId + '/count').then(function (res) {
