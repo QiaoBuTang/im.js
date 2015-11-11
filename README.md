@@ -37,11 +37,11 @@
   * eventName {String} (必须) 监听的事件名称
     * chat.{bId}: 聊天
     * chats: 所有聊天
-    * note: 系统通知
+    * note.{bId}: 系统通知
     * notes: 所有系统通知
-    * live: 在线交流
+    * live.{bId}: 在线交流
     * lives: 所有在线交流
-    * online: 在线人数
+    * online.{bId}: 在线人数
   * callback {Function} (必须) 事件的回掉函数
 
 返回: 无
