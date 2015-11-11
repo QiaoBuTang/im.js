@@ -53,18 +53,18 @@ var IM = (function () {
     Comet.prototype.addBusiness = function (bids) {
         var _this = this;
         bids = this._processBid(bids);
-        this.businessIds = this.businessIds.concat(bids);
+        this.bIds = this.bIds.concat(bids);
         bids.forEach(function (bid) {
             $.get(ORIGIN + '/comet/web/bind/' + _this.uuid + '/' + bid)
                 .then(function (res) {
-                    if (res.resultCode === 2000) {
-                        _this.trigger('didBind', bid);
+                    if (res.resultCode === 200) {
+                        _this.emit('didBind', bid);
                     } else {
-                        _this.trigger('bindError', bid);
+                        _this.emit('bindError', bid);
                     }
                 })
                 .fail(function () {
-                    _this.trigger('bindError', bid);
+                    _this.emit('bindError', bid);
                 });
         });
     };
@@ -74,14 +74,14 @@ var IM = (function () {
         bids.forEach(function (bid) {
             $.get(ORIGIN + '/comet/web/unbind/' + bid)
                 .then(function (res) {
-                    if (res.resultCode === 2000) {
-                        _this.trigger('didUnBind', bid);
+                    if (res.resultCode === 200) {
+                        _this.emit('didUnBind', bid);
                     } else {
-                        _this.trigger('unBindError', bid);
+                        _this.emit('unBindError', bid);
                     }
                 })
                 .fail(function () {
-                    _this.trigger('unBindError', bid);
+                    _this.emit('unBindError', bid);
                 });
         });
     };
@@ -109,17 +109,25 @@ var IM = (function () {
         var _this = this;
         var type = res.type;
         var emit = function (evtName, bId, result) {
-            _this.emit(evtName + '.' + bId, result);
+            if (arguments.length === 2) {
+                result = bId;
+                bid = null;
+            }
+            evtName = typeof bId === 'string' ? evtName + '.' + bId : evtName;
+            _this.emit(evtName, result);
         };
         switch (type) {
             case 1:
                 emit('chat', res.businessId, res.result);
+                emit('chats', res.result);
             break;
             case 2:
-                emit('noty', res.businessId, res.result);
+                emit('note', res.businessId, res.result);
+                emit('notes', res.result);
             break;
             case 3:
                 emit('live', res.businessId, res.result);
+                emit('lives', res.result);
             break;
             case 4:
                 emit('online', res.result.businessId, res.result.count);
