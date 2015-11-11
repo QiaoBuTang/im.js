@@ -46,7 +46,7 @@ var IM = (function () {
             })
             .then($.proxy(this.comet, this))
             .then(function () {
-                callback();
+                callback && callback();
             });
         return this;
     };
