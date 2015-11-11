@@ -2,10 +2,10 @@ var im = IM('liveId');
 
 im.open();
 
-im.on('message', function (evt, message) {
+im.on('chat.liveId', function (evt, message) {
     console.log(message);
 });
 
-im.connections(function (count) {
+im.connections('liveId', function (count) {
     console.log(count);
 });

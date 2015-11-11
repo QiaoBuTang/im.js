@@ -53,6 +53,7 @@ var IM = (function () {
     Comet.prototype.addBusiness = function (bids) {
         var _this = this;
         bids = this._processBid(bids);
+        this.businessIds = this.businessIds.concat(bids);
         bids.forEach(function (bid) {
             $.get(ORIGIN + '/comet/web/bind/' + _this.uuid + '/' + bid)
                 .then(function (res) {
@@ -108,7 +109,7 @@ var IM = (function () {
         var _this = this;
         var type = res.type;
         var emit = function (evtName, bId, result) {
-            _this.trigger(evtName, result);
+            _this.emit(evtName + '.' + bId, result);
         };
         switch (type) {
             case 1:
@@ -132,13 +133,10 @@ var IM = (function () {
      * 获取当前业务的连接数
      * @param callback {Function}
      */
-    Comet.prototype.connections = function (callback) {
-        $.get(ORIGIN + '/comet/web/group/' + this.businessIds + '/count').then(function (res) {
+    Comet.prototype.connections = function (bId, callback) {
+        $.get(ORIGIN + '/comet/web/group/' + bId + '/count').then(function (res) {
             if (res.resultCode === 200) {
-                callback({
-                    resultCode: 200,
-                    count: 123
-                });
+                callback(res.count);
             } else {
                 callback({
                     resultCode: 400
