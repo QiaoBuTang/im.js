@@ -1,8 +1,6 @@
 var im = IM('liveId,META_liveId');
 
-im.open(function () {
-    //im.addOnlineBind('liveId')
-});
+im.open();
 
 im.on('chats', function (evt, message) {
     console.log(message);
