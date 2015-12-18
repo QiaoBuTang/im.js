@@ -100,7 +100,6 @@ var IM = (function () {
                     _this.comet(); // 如果超时，立刻重连
                 } else if (res.resultCode === 200) {
                     _this._emit(res);
-                    _this.emit('message', res.result);
                     _this.comet();
                 }
             })
