@@ -99,7 +99,8 @@ var IM = (function () {
                 if (res.resultCode === 504) {
                     _this.comet(); // 如果超时，立刻重连
                 } else if (res.resultCode === 200) {
-                    _this._emit(res);
+                    var messages = _this._processMessage(res.messages);
+                    _this._emit(messages);
                     _this.comet();
                 }
             })
@@ -110,9 +111,24 @@ var IM = (function () {
                 }, 20000);
             });
     };
-    Comet.prototype._emit = function (res) {
+    Comet.prototype._processMessage = function(messages) {
+        var msgObj = {};
+
+        messages.forEach(function (message) {
+            var type = message.type;
+            var bId = message.businessId;
+
+            if (msgObj[type] === undefined) msgObj[type] = {};
+            if (msgObj[type][bId] === undefined) msgObj[type][bId] = [];
+
+            msgObj[type][bId].push(message);
+        });
+
+        return msgObj;
+    };
+    Comet.prototype._emit = function (messages) {
         var _this = this;
-        var type = res.type;
+        var type;
         var emit = function (evtName, bId, result) {
             if (arguments.length === 2) {
                 result = bId;
@@ -121,22 +137,39 @@ var IM = (function () {
             evtName = typeof bId === 'string' ? evtName + '.' + bId : evtName;
             _this.emit(evtName, result);
         };
-        switch (type) {
-            case 1:
-                emit('chat', res.businessId, res.result);
-                emit('chats', res.result);
-            break;
-            case 2:
-                emit('note', res.businessId, res.result);
-                emit('notes', res.result);
-            break;
-            case 3:
-                emit('live', res.businessId, res.result);
-                emit('lives', res.result);
-            break;
-            case 4:
-                emit('online', res.result.businessId, res.result.count);
-            break;
+        var getAllMsg = function (messages) {
+            var msgs = [];
+
+            for (var bid in messages) {
+                msgs = msgs.concat(messages[bid]);
+            }
+            return msgs;
+        };
+        var emitByBid = function (evtName, messages) {
+            for (var bid in messages) {
+                emit(evtName, bid, messages[bid]);
+            }
+        };
+        for (type in messages) {
+            switch (Number(type)) {
+                case 1:
+                    emitByBid('chat', messages[type]);
+                    emit('chats', getAllMsg(messages[type]));
+                    break;
+                case 2:
+                    emitByBid('note', messages[type]);
+                    emit('notes', getAllMsg(messages[type]));
+                    break;
+                case 3:
+                    emitByBid('live', messages[type]);
+                    emit('lives', getAllMsg(messages[type]));
+                    break;
+                case 4:
+                    $.map(messages[type], function (bid, messages) {
+                        emit('online', bid, messages[0].result.count);
+                    });
+                    break;
+            }
         }
     };
     Comet.prototype.close = function () {
