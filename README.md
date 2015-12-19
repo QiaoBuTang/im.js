@@ -65,13 +65,13 @@
 
 返回: 无
 
-### `imClient.connections(callback)`
+### `imClient.connections(bid, callback)`
 
 描述: 获得当前业务连接的人数
 
 参数:
-
- * callback {Function} (必须) 获取结果的回掉，会将结果回传，`{resultCode: 200, count: 123}`
+ * bid {String} 业务 id
+ * callback {Function} (必须) 获取结果的回掉，会将结果回传，`123`
  
 返回: 无
 
