@@ -5,6 +5,9 @@ im.open();
 im.on('chats', function (evt, message) {
     console.log(message);
 });
+im.on('chat.liveId', function (evt, message) {
+    console.log(message);
+});
 im.on('online.liveId', function (evt, res) {
     console.log(res);
 });

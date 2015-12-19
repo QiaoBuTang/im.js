@@ -121,7 +121,7 @@ var IM = (function () {
             if (msgObj[type] === undefined) msgObj[type] = {};
             if (msgObj[type][bId] === undefined) msgObj[type][bId] = [];
 
-            msgObj[type][bId].push(message);
+            msgObj[type][bId].push(message.result);
         });
 
         return msgObj;
@@ -147,26 +147,27 @@ var IM = (function () {
         };
         var emitByBid = function (evtName, messages) {
             for (var bid in messages) {
-                emit(evtName, bid, messages[bid]);
+                emit(evtName, bid, {messages: messages[bid]});
             }
         };
         for (type in messages) {
             switch (Number(type)) {
                 case 1:
                     emitByBid('chat', messages[type]);
-                    emit('chats', getAllMsg(messages[type]));
+                    emit('chats', {messages: getAllMsg(messages[type])});
                     break;
                 case 2:
                     emitByBid('note', messages[type]);
-                    emit('notes', getAllMsg(messages[type]));
+                    emit('notes', {messages: getAllMsg(messages[type])});
                     break;
                 case 3:
                     emitByBid('live', messages[type]);
-                    emit('lives', getAllMsg(messages[type]));
+                    emit('lives', {messages: getAllMsg(messages[type])});
                     break;
                 case 4:
-                    $.map(messages[type], function (bid, messages) {
-                        emit('online', bid, messages[0].result.count);
+                    $.map(messages[type], function (messages) {
+                        var message = messages[0];
+                        emit('online', message.businessId, message.count);
                     });
                     break;
             }
