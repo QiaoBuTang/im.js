@@ -52,7 +52,7 @@
 
 参数:
 
-  * eventName {String} (必须) 监听的事件名称，现在只有 `message` 事件
+  * eventName {String} (必须) 监听的事件名称，
   * callback {Function} (必须) 事件的回掉函数
 
 返回: 无
