@@ -8,6 +8,13 @@
     <script src="../bower_components/jquery/dist/jquery.js"></script>
     <script>
         var IM_SERVER = 'http://im.av.qiaobutang.com:8333';
+        (function ($){
+            $.ajaxSetup({
+                xhrFields: {
+                    withCredentials: true
+                }
+            });
+        }(jQuery));
     </script>
     <script src="../im.js"></script>
     <script src="./demo.js"></script>

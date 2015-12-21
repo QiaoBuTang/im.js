@@ -50,6 +50,20 @@ var IM = (function () {
             });
         return this;
     };
+    Comet.prototype.rebind = function (bIds) {
+        var _this = this;
+        $.post(ORIGIN + '/comet/web/rebind/' + this.uuid, {businessIds: bIds.join(',')})
+            .then(function (ret) {
+                if (ret.resultCode === 200) {
+                    _this.comet();
+                } else {
+                    throw new Error('rebind failed');
+                }
+            })
+            .fail(function () {
+                throw new Error('rebind failed');
+            })
+    };
     Comet.prototype.addOnlineBind = function (bid) {
         var meta = 'META_' + bid;
         this.addBusiness(meta);
@@ -100,16 +114,21 @@ var IM = (function () {
                     _this.comet(); // 如果超时，立刻重连
                 } else if (res.resultCode === 200) {
                     var messages = _this._processMessage(res.messages);
-                    _this._emit(messages);
-                    _this.comet();
+                    if (messages[5]) {
+                        // must rebind the bid
+                        _this.rebind(messages[5]['*'][0].businessIds)
+                    } else {
+                        _this._emit(messages);
+                        _this.comet();
+                    }
                 }
             })
             .fail(function () {
-                // 系统错误后重连
-                setTimeout(function () {
-                    _this.open();
-                }, 20000);
-            });
+                    // 系统错误后重连
+                    setTimeout(function () {
+                        _this.open();
+                    }, 20000);
+                });
     };
     Comet.prototype._processMessage = function(messages) {
         var msgObj = {};
